@@ -34,6 +34,7 @@ customer_payments as (
 
     select
         orders.customer_id,
+        count(distinct payment_method) as methods,
         sum(amount)::bigint as total_amount
 
     from payments
@@ -54,6 +55,7 @@ final as (
         customer_orders.first_order,
         customer_orders.most_recent_order,
         customer_orders.number_of_orders,
+        customer_payments.methods as number_of_paying_method,
         customer_payments.total_amount as customer_lifetime_value
 
     from customers
