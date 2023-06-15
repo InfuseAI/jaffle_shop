@@ -20,6 +20,26 @@ renamed as (
 
 ),
 
+dup as (
+  SELECT *  FROM renamed
+  {% for i in range(0, 50) %}
+  UNION
+  SELECT *  FROM renamed
+  {% endfor %}
+),
+
+dupdup as (
+  SELECT *  FROM dup
+  {% for i in range(0, 100) %}
+  UNION
+  SELECT *  FROM dup
+  {% endfor %}
+),
+
+dedup as (
+  select distinct order_id, customer_id, order_date, status from dupdup
+),
+
 -- Shift the order_date by the number of days since 2018-04-09 (the max order_date in the raw data)
 shift_date as (
     
@@ -29,7 +49,7 @@ shift_date as (
         (order_date + datediff('day', date '2018-04-09', CURRENT_DATE)::int) as order_date,
         status        
 
-    from renamed
+    from dedup
 )
 
 select * from shift_date
