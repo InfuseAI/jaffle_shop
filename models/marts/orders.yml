@@ -122,8 +122,6 @@ metrics:
     label: Revenue
     type_params:
       measure: revenue
-    filter: |
-      {{ Dimension('order_id__status') }} = 'completed'
   - name: average_order_amount
     description: "The average size of a jaffle order"
     type: simple
@@ -138,8 +136,6 @@ metrics:
       expr: revenue - expenses
       metrics:
         - name: revenue
-          filter: |
-            {{ Dimension('order_id__status') }} = 'completed'
         - name: expenses
           filter: |
             {{ Dimension('order_id__status') }} = 'completed'

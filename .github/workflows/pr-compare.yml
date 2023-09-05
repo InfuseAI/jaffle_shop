@@ -18,8 +18,13 @@ jobs:
 
     - name: PipeRider Compare
       uses: InfuseAI/piperider-compare-action@v1
+      env:
+        PIPERIDER_API_SERVICE: https://staging.cloud.piperider.io      
       with:
-        cloud_api_token: ${{ secrets.PIPERIDER_CLOUD_TOKEN_ID }}
-        cloud_project: ${{ secrets.PIPERIDER_API_PROJECT }}
+        # cloud_api_token: ${{ secrets.PIPERIDER_CLOUD_TOKEN_ID }}
+        # cloud_project: ${{ secrets.PIPERIDER_API_PROJECT }}
+        cloud_api_token: ${{ secrets.PIPERIDER_STAGING_CLOUD_TOKEN_ID }}
+        cloud_project: ${{ secrets.PIPERIDER_STAGING_API_PROJECT }}
         upload: true
-        share: true      
+        share: true
+        piperider_version: '0.33.0rc1'
