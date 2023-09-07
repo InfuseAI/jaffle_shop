@@ -1,4 +1,4 @@
-with customers as (
+with recursive customers as (
 
     select * from {{ ref('stg_customers') }}
 
@@ -45,6 +45,22 @@ customer_payments as (
 
 ),
 
+dup as (
+    select customer_payments.*, 1 as lvl
+    from customer_payments
+
+    union all
+
+    select customer_payments.*, dup.lvl + 1
+    from dup
+    join customer_payments on customer_payments.customer_id = dup.customer_id
+    where dup.lvl < 8000
+),
+
+dedup as (
+    select distinct customer_id, total_amount from dup
+),
+
 final as (
 
     select
@@ -54,15 +70,15 @@ final as (
         customer_orders.first_order,
         customer_orders.most_recent_order,
         customer_orders.number_of_orders,
-        customer_payments.total_amount as customer_lifetime_value
+        dedup.total_amount as customer_lifetime_value
 
     from customers
 
     left join customer_orders
         on customers.customer_id = customer_orders.customer_id
 
-    left join customer_payments
-        on  customers.customer_id = customer_payments.customer_id
+    left join dedup
+        on  customers.customer_id = dedup.customer_id
 
 )
 
